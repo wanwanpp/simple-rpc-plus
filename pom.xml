@@ -63,12 +63,6 @@
       <version>3.4.6</version>
     </dependency>
 
-    <dependency>
-      <groupId>org.apache.commons</groupId>
-      <artifactId>commons-collections4</artifactId>
-      <version>4.0</version>
-    </dependency>
-
     <!--可绕过构造器创建实例-->
     <dependency>
       <groupId>org.objenesis</groupId>
