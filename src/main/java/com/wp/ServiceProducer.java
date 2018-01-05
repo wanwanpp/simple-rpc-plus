@@ -7,7 +7,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  * @author 王萍
  * @date 2018/1/5 0005e
  */
-public class BootStrap {
+public class ServiceProducer {
     public static void start() {
         //日志配置
         BasicConfigurator.configure();

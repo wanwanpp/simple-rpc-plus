@@ -9,6 +9,6 @@ import org.junit.Test;
 public class BootStrapServerTest {
     @Test
     public void startServer(){
-      BootStrap.start();
+      ServiceProducer.start();
     }
 }
