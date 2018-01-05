@@ -1,4 +1,4 @@
-package com.wp;
+package com.wp.registry;
 
 import org.apache.zookeeper.*;
 import org.slf4j.Logger;

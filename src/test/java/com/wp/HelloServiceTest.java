@@ -9,9 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-/**
- * Unit test for simple RpcBootstrap.
- */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "classpath:spring-client.xml")
 public class HelloServiceTest {
@@ -26,4 +23,6 @@ public class HelloServiceTest {
         System.out.println(result);
         Assert.assertEquals("Hello! World", result);
     }
+
+
 }

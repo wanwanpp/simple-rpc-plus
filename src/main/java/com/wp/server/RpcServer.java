@@ -1,7 +1,7 @@
 package com.wp.server;
 
-import com.wp.ServiceRegistry;
 import com.wp.annotation.RpcService;
+import com.wp.registry.ServiceRegistry;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;

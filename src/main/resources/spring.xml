@@ -5,9 +5,9 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
 
     <context:component-scan base-package="com.wp"/>
-    <context:property-placeholder location="classpath:config.properties"/>
+    <context:property-placeholder location="classpath:server-config.properties"/>
 
-    <bean id="serviceRegistry" class="com.wp.ServiceRegistry">
+    <bean id="serviceRegistry" class="com.wp.registry.ServiceRegistry">
         <!--<constructor-arg name="registryAddress" value="192.168.44.134:2181"/>-->
         <constructor-arg name="registryAddress" value="${registry.address}"/>
     </bean>

@@ -4,10 +4,11 @@ import org.apache.log4j.BasicConfigurator;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
- * Hello world!
+ * @author 王萍
+ * @date 2018/1/5 0005e
  */
-public class RpcBootstrap {
-    public static void main(String[] args) {
+public class BootStrap {
+    public static void start() {
         //日志配置
         BasicConfigurator.configure();
         new ClassPathXmlApplicationContext("spring.xml");
