@@ -4,10 +4,10 @@
        xmlns:context="http://www.springframework.org/schema/context"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
 
-    <context:property-placeholder location="classpath:config.properties"/>
+    <context:property-placeholder location="classpath:client-config.properties"/>
 
     <bean id="serviceDiscovery" class="com.wp.client.ServiceDiscovery">
-        <constructor-arg name="registryAddress" value="${registry.address}"/>
+        <constructor-arg name="registryAddress" value="${discovery.address}"/>
     </bean>
 
     <!-- 配置 RPC 代理 -->
