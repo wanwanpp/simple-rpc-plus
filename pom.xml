@@ -3,11 +3,11 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>com.wp</groupId>
-  <artifactId>rpc-frame-with-dependency</artifactId>
+  <artifactId>simple-rpc-2</artifactId>
   <version>1.0-SNAPSHOT</version>
   <packaging>jar</packaging>
 
-  <name>rpc-frame-with-dependency</name>
+  <name>simple-rpc-2</name>
   <url>http://maven.apache.org</url>
 
   <properties>
