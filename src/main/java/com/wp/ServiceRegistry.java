@@ -14,6 +14,7 @@ public class ServiceRegistry {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ServiceRegistry.class);
 
+    // TODO: 2018/1/4 0004 latch的作用
     private CountDownLatch latch = new CountDownLatch(1);
 
     private String registryAddress;
