@@ -2,27 +2,15 @@ package com.wp;
 
 import com.wp.client.RpcProxy;
 import com.wp.service.HelloService;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = "classpath:spring-client.xml")
 public class HelloServiceTest {
 
-    @Autowired
-    private RpcProxy rpcProxy;
-
-    @Test
-    public void helloTest() {
+    public static void main(String[] args) {
+        RpcProxy rpcProxy = ServiceConsumer.getConsumeProxy();
         HelloService helloService = rpcProxy.create(HelloService.class);
         String result = helloService.hello("World");
+        String result1 = helloService.hello("World");
+        String result2 = helloService.hello("World");
         System.out.println(result);
-        Assert.assertEquals("Hello! World", result);
     }
-
-
 }
