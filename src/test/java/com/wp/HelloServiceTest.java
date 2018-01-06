@@ -9,8 +9,8 @@ public class HelloServiceTest {
         RpcProxy rpcProxy = new RpcProxy();
         HelloService helloService = rpcProxy.create(HelloService.class);
         String result = helloService.hello("World");
-        String result1 = helloService.hello("World");
-        String result2 = helloService.hello("World");
+//        String result1 = helloService.hello("World");
+//        String result2 = helloService.hello("World");
         System.out.println(result);
     }
 }
