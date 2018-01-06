@@ -77,7 +77,7 @@ public class RpcServer implements ApplicationContextAware, InitializingBean {
                                     //编码响应
                                     .addLast(new Encoder(Response.class))
                                     //处理请求
-                                    .addLast(new Handler(handlerMap));
+                                    .addLast(new ServerHandler(handlerMap));
                         }
                     })
                     .option(ChannelOption.SO_BACKLOG, 128)

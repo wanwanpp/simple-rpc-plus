@@ -14,13 +14,13 @@ import java.util.Map;
  * @author 王萍
  * @date 2018/1/5 0004
  */
-public class Handler extends SimpleChannelInboundHandler<Request> {
-    private static final Logger LOGGER = LoggerFactory.getLogger(Handler.class);
+public class ServerHandler extends SimpleChannelInboundHandler<Request> {
+    private static final Logger LOGGER = LoggerFactory.getLogger(ServerHandler.class);
 
     // 存放接口名与服务Bean之间的映射关系
     private final Map<String, Object> handlerMap;
 
-    public Handler(Map<String, Object> handlerMap) {
+    public ServerHandler(Map<String, Object> handlerMap) {
         this.handlerMap = handlerMap;
     }
 

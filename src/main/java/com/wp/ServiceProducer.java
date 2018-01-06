@@ -11,6 +11,6 @@ public class ServiceProducer {
     public static void start() {
         //日志配置
         BasicConfigurator.configure();
-        new ClassPathXmlApplicationContext("spring.xml");
+        new ClassPathXmlApplicationContext("spring-producer.xml");
     }
 }
