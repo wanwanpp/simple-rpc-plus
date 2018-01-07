@@ -22,7 +22,6 @@ public class RpcClient extends SimpleChannelInboundHandler<Response> {
     private String host;
     private int port;
     private Response response;
-    private Channel channel;
 
     private final Object obj = new Object();
 
@@ -31,7 +30,22 @@ public class RpcClient extends SimpleChannelInboundHandler<Response> {
         this.port = port;
     }
 
-    public void connect() throws Exception {
+    @Override
+    public void channelRead0(ChannelHandlerContext ctx, Response response) throws Exception {
+        this.response = response;
+
+        synchronized (obj) {
+            obj.notifyAll(); // 收到响应，唤醒线程
+        }
+    }
+
+    @Override
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+        LOGGER.error("client caught exception", cause);
+        ctx.close();
+    }
+
+    public Response send(Request request) throws Exception {
         EventLoopGroup group = new NioEventLoopGroup();
         try {
             Bootstrap bootstrap = new Bootstrap();
@@ -46,40 +60,20 @@ public class RpcClient extends SimpleChannelInboundHandler<Response> {
                         }
                     })
                     .option(ChannelOption.SO_KEEPALIVE, true);
-            //连接服务提供方的地址
+
             ChannelFuture future = bootstrap.connect(host, port).sync();
-            this.channel = future.channel();
+            future.channel().writeAndFlush(request).sync();
+
+            synchronized (obj) {
+                obj.wait(); // 未收到响应，使线程等待
+            }
+
+            if (response != null) {
+                future.channel().closeFuture().sync();
+            }
+            return response;
         } finally {
             group.shutdownGracefully();
         }
-    }
-
-    @Override
-    public void channelRead0(ChannelHandlerContext ctx, Response response) throws Exception {
-        this.response = response;
-
-        synchronized (obj) {
-            // 收到响应，唤醒线程
-            obj.notifyAll();
-        }
-    }
-
-    @Override
-    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-        LOGGER.error("client caught exception", cause);
-        ctx.close();
-    }
-
-    public Response send(Request request) throws Exception {
-        connect();
-        channel.writeAndFlush(request).sync();
-        //线程等待
-        synchronized (obj) {
-            obj.wait(); // 未收到响应，使线程等待
-        }
-//        if (response != null) {
-//            channel.closeFuture().sync();
-//        }
-        return response;
     }
 }

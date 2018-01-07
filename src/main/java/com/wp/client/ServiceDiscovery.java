@@ -43,7 +43,8 @@ public class ServiceDiscovery {
             if (size == 1) {//只有一个服务提供方
                 data = serviceAddressList.get(0);
                 LOGGER.debug("using only data: {}", data);
-            } else {//使用随机分配法。简单的负载均衡法
+            } else {
+                //使用随机分配法。简单的负载均衡法
                 data = serviceAddressList.get(ThreadLocalRandom.current().nextInt(size));
                 LOGGER.debug("using random data: {}", data);
             }

@@ -3,8 +3,10 @@ package com.wp.client;
 import com.wp.server.Request;
 import com.wp.server.Response;
 import com.wp.utils.PropertiesUtil;
+import net.sf.cglib.proxy.InvocationHandler;
 import net.sf.cglib.proxy.Proxy;
 
+import java.lang.reflect.Method;
 import java.util.Map;
 import java.util.Properties;
 import java.util.UUID;
@@ -31,35 +33,33 @@ public class RpcProxy {
         return (T) Proxy.newProxyInstance(
                 interfaceClass.getClassLoader(),
                 new Class<?>[]{interfaceClass},
-                (proxy, method, args) -> {
-                    // 创建并初始化 RPC 请求
-                    Request request = new Request();
-                    request.setRequestId(UUID.randomUUID().toString());
-                    request.setClassName(method.getDeclaringClass().getName());
-                    request.setMethodName(method.getName());
-                    request.setParameterTypes(method.getParameterTypes());
-                    request.setParameters(args);
+                new InvocationHandler() {
+                    @Override
+                    public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+                        Request request = new Request(); // 创建并初始化 RPC 请求
+                        request.setRequestId(UUID.randomUUID().toString());
+                        request.setClassName(method.getDeclaringClass().getName());
+                        request.setMethodName(method.getName());
+                        request.setParameterTypes(method.getParameterTypes());
+                        request.setParameters(args);
 
-//                    if (serviceDiscovery != null) {
-                    //获取服务地址
-                    serverAddress = serviceDiscovery.discover();
-//                    }
-                    RpcClient rpcClient = null;
-                    if (rpcClientMap.containsKey(serverAddress)) {
-                        rpcClient = rpcClientMap.get(serverAddress);
-                    } else {
+                        if (serviceDiscovery != null) {
+                            serverAddress = serviceDiscovery.discover(); // 发现服务
+                        }
+
                         String[] array = serverAddress.split(":");
                         String host = array[0];
                         int port = Integer.parseInt(array[1]);
-                        rpcClient = new RpcClient(host, port);
-                        rpcClientMap.put(serverAddress, rpcClient);
-                    }
-                    Response response = rpcClient.send(request);
 
-                    if (response.isError()) {
-                        throw response.getError();
-                    } else {
-                        return response.getResult();
+                        RpcClient client = new RpcClient(host, port); // 初始化 RPC 客户端
+                        Response response = client.send(request); // 通过 RPC 客户端发送 RPC 请求并获取 RPC 响应
+
+                        if (response.isError()) {
+                            throw response.getError();
+                        } else {
+
+                            return response.getResult();
+                        }
                     }
                 }
         );

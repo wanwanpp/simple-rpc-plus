@@ -1,7 +1,7 @@
 package com.wp.server;
 
-import com.wp.annotation.RpcService;
 import com.wp.registry.ServiceRegistry;
+import com.wp.utils.PropertiesUtil;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
@@ -12,56 +12,65 @@ import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.InitializingBean;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
 
-import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
+import java.util.Properties;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @author 王萍
  * @date 2018/1/4 0004
  */
 
-/**
- * 实现spring的InitializingBean接口，在spring完成对Bean属性注入后执行afterPropertiesSet方法
- */
-public class RpcServer implements ApplicationContextAware, InitializingBean {
+public class RpcServer {
     private static final Logger LOGGER = LoggerFactory.getLogger(RpcServer.class);
 
     //    服务器地址
     private String serverAddress;
     private ServiceRegistry serviceRegistry;
     // 存放接口名与服务Bean之间的映射关系
-    private Map<String, Object> handlerMap = new HashMap<>();
+    private Map<String, Object> serviceMap = new ConcurrentHashMap<>();
 
-    public RpcServer(String serverAddress) {
-        this.serverAddress = serverAddress;
+    {
+        Properties properties = PropertiesUtil.loadProps("server-config.properties");
+        serverAddress = properties.getProperty("server.address");
+        serviceRegistry = new ServiceRegistry(properties.getProperty("registry.address"));
     }
 
-    public RpcServer(String serverAddress, ServiceRegistry serviceRegistry) {
-        this.serverAddress = serverAddress;
-        this.serviceRegistry = serviceRegistry;
-    }
+//    //利用ctx得到有指定注解的Bean
+//    public void initService() {
+//        Map<String, Object> serviceBeanMap = ctx.getBeansWithAnnotation(RpcService.class);
+//        if (serviceBeanMap != null && serviceBeanMap.size() > 0) {
+//            for (Object serviceBean : serviceBeanMap.values()) {
+//                //获取@RpcService的value指定的className
+//                String interfaceName = serviceBean.getClass().getAnnotation(RpcService.class).value().getName();
+//                serviceMap.put(interfaceName, serviceBean);
+//            }
+//        }
+//    }
 
-    //利用ctx得到有指定注解的Bean
-    @Override
-    public void setApplicationContext(ApplicationContext ctx) throws BeansException {
-        // 获取所有带有 RpcService 注解的 Spring Bean
-        Map<String, Object> serviceBeanMap = ctx.getBeansWithAnnotation(RpcService.class);
-        if (serviceBeanMap != null && serviceBeanMap.size() > 0) {
-            for (Object serviceBean : serviceBeanMap.values()) {
-                //获取@RpcService的value指定的className
-                String interfaceName = serviceBean.getClass().getAnnotation(RpcService.class).value().getName();
-                handlerMap.put(interfaceName, serviceBean);
-            }
+    public void prepareService(Object service) {
+        Class<?>[] interfaces = service.getClass().getInterfaces();
+        for (Class c : interfaces) {
+            serviceMap.put(c.getName(), service);
         }
     }
 
-    @Override
-    public void afterPropertiesSet() throws Exception {
+    public void addService(Object service) {
+        prepareService(service);
+    }
+
+    public List<String> getActiveServiceName() {
+        return new ArrayList<>(serviceMap.keySet());
+    }
+
+    public Object removeService(String serviceName) {
+        return serviceMap.remove(serviceName);
+    }
+
+    public void start() {
         //启动Rpc服务
         EventLoopGroup bossGroup = new NioEventLoopGroup();
         EventLoopGroup workerGroup = new NioEventLoopGroup();
@@ -77,7 +86,7 @@ public class RpcServer implements ApplicationContextAware, InitializingBean {
                                     //编码响应
                                     .addLast(new Encoder(Response.class))
                                     //处理请求
-                                    .addLast(new ServerHandler(handlerMap));
+                                    .addLast(new ServerHandler(serviceMap));
                         }
                     })
                     .option(ChannelOption.SO_BACKLOG, 128)
@@ -96,6 +105,8 @@ public class RpcServer implements ApplicationContextAware, InitializingBean {
             }
 
             future.channel().closeFuture().sync();
+        } catch (Exception e) {
+            e.printStackTrace();
         } finally {
             workerGroup.shutdownGracefully();
             bossGroup.shutdownGracefully();
