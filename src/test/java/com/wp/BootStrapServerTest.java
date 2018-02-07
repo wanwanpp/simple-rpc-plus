@@ -1,7 +1,7 @@
 package com.wp;
 
 import com.wp.server.RpcServer;
-import com.wp.service.HelloServiceImpl;
+import org.apache.log4j.BasicConfigurator;
 import org.junit.Test;
 
 /**
@@ -11,8 +11,9 @@ import org.junit.Test;
 public class BootStrapServerTest {
     @Test
     public void startServer() {
+        BasicConfigurator.configure();
         RpcServer server = new RpcServer();
-        server.prepareService(new HelloServiceImpl());
+        System.out.println(server.getActiveServiceName());
         server.start();
     }
 }

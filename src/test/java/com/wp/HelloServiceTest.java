@@ -2,25 +2,33 @@ package com.wp;
 
 import com.wp.client.RpcProxy;
 import com.wp.service.HelloService;
-import org.apache.log4j.BasicConfigurator;
-import org.junit.Assert;
-import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class HelloServiceTest {
     private static final Logger LOGGER = LoggerFactory.getLogger(HelloServiceTest.class);
 
-    @Test
-    public void test() {
-        //日志配置
-        BasicConfigurator.configure();
+    public static void main(String[] args) throws InterruptedException {
         RpcProxy rpcProxy = new RpcProxy();
         HelloService helloService = rpcProxy.create(HelloService.class);
         String result = helloService.hello("World");
         LOGGER.info(result);
-        System.out.println(result);
-        Assert.assertEquals("Hello! World", result);
-        System.out.println(helloService.hello("World"));
+        Thread.sleep(2000);
+        LOGGER.info(result);
+        Thread.sleep(2000);
+        LOGGER.info(result);
     }
+//    @Test
+//    public void test() throws InterruptedException, IOException {
+//        //日志配置,用来log4j.properties就不用这一句
+////        BasicConfigurator.configure(new RollingFileAppender(new PatternLayout("%r [%t] %p %c %x - %m%n"), "client.log"));
+//        RpcProxy rpcProxy = new RpcProxy();
+//        HelloService helloService = rpcProxy.create(HelloService.class);
+//        String result = helloService.hello("World");
+//        LOGGER.info(result);
+//        Thread.sleep(2000);
+//        LOGGER.info(result);
+//        Thread.sleep(2000);
+//        LOGGER.info(result);
+//    }
 }

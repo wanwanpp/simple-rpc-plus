@@ -1,6 +1,8 @@
 package com.wp.server;
 
+import com.wp.annotation.RpcService;
 import com.wp.registry.ServiceRegistry;
+import com.wp.utils.ClassUtil;
 import com.wp.utils.PropertiesUtil;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
@@ -30,36 +32,42 @@ public class RpcServer {
     //    服务器地址
     private String serverAddress;
     private ServiceRegistry serviceRegistry;
-    // 存放接口名与服务Bean之间的映射关系
+    private String servicePackage;
+    // 存放接口名与service之间的映射关系
     private Map<String, Object> serviceMap = new ConcurrentHashMap<>();
 
     {
         Properties properties = PropertiesUtil.loadProps("server-config.properties");
         serverAddress = properties.getProperty("server.address");
+        servicePackage = properties.getProperty("server.servicePackage");
         serviceRegistry = new ServiceRegistry(properties.getProperty("registry.address"));
+        getRpcService();
     }
 
-//    //利用ctx得到有指定注解的Bean
-//    public void initService() {
-//        Map<String, Object> serviceBeanMap = ctx.getBeansWithAnnotation(RpcService.class);
-//        if (serviceBeanMap != null && serviceBeanMap.size() > 0) {
-//            for (Object serviceBean : serviceBeanMap.values()) {
-//                //获取@RpcService的value指定的className
-//                String interfaceName = serviceBean.getClass().getAnnotation(RpcService.class).value().getName();
-//                serviceMap.put(interfaceName, serviceBean);
-//            }
-//        }
-//    }
+    private void getRpcService() {
 
-    public void prepareService(Object service) {
-        Class<?>[] interfaces = service.getClass().getInterfaces();
-        for (Class c : interfaces) {
-            serviceMap.put(c.getName(), service);
+        List<Class<?>> classList = ClassUtil.getClassList(servicePackage);
+        if (classList != null && classList.size() > 0) {
+            for (Class c : classList) {
+                if (c.isAnnotationPresent(RpcService.class)) {
+                    String interfaceName = ((RpcService) c.getAnnotation(RpcService.class)).value().getName();
+                    try {
+                        serviceMap.put(interfaceName, c.newInstance());
+                    } catch (InstantiationException e) {
+                        e.printStackTrace();
+                    } catch (IllegalAccessException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
         }
     }
 
     public void addService(Object service) {
-        prepareService(service);
+        Class<?>[] interfaces = service.getClass().getInterfaces();
+        for (Class c : interfaces) {
+            serviceMap.put(c.getName(), service);
+        }
     }
 
     public List<String> getActiveServiceName() {
@@ -81,17 +89,13 @@ public class RpcServer {
                         @Override
                         public void initChannel(SocketChannel channel) throws Exception {
                             channel.pipeline()
-                                    // 解码请求
                                     .addLast(new Decoder(Request.class))
-                                    //编码响应
                                     .addLast(new Encoder(Response.class))
-                                    //处理请求
                                     .addLast(new ServerHandler(serviceMap));
                         }
                     })
                     .option(ChannelOption.SO_BACKLOG, 128)
                     .childOption(ChannelOption.SO_KEEPALIVE, true);
-
             String[] array = serverAddress.split(":");
             String host = array[0];
             int port = Integer.parseInt(array[1]);

@@ -6,7 +6,8 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Created by 王萍 on 2017/7/31 0031.
+ * @author 王萍
+ * @date 2018/1/5 0004
  */
 //标有此注解的class，表示它是一个远程接口。
 @Target({ElementType.TYPE})
