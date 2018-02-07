@@ -1,9 +1,9 @@
 package com.wp.client;
 
-import com.wp.server.Decoder;
-import com.wp.server.Encoder;
-import com.wp.server.Request;
-import com.wp.server.Response;
+import com.wp.coder.Decoder;
+import com.wp.coder.Encoder;
+import com.wp.model.Request;
+import com.wp.model.Response;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;

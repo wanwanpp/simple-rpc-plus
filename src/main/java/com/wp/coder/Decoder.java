@@ -1,4 +1,4 @@
-package com.wp.server;
+package com.wp.coder;
 
 import com.wp.utils.SerializationUtil;
 import io.netty.buffer.ByteBuf;

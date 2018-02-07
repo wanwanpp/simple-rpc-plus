@@ -20,8 +20,7 @@ public class SerializationUtil {
     //    创建objenesis对象创建器
     private static Objenesis objenesis = new ObjenesisStd(true);
 
-    private SerializationUtil() {
-    }
+    private SerializationUtil() {}
 
     @SuppressWarnings("unchecked")
     private static <T> Schema<T> getSchema(Class<T> cls) {

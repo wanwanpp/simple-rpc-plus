@@ -1,7 +1,7 @@
 package com.wp.client;
 
-import com.wp.server.Request;
-import com.wp.server.Response;
+import com.wp.model.Request;
+import com.wp.model.Response;
 import com.wp.utils.PropertiesUtil;
 
 import java.lang.reflect.InvocationHandler;

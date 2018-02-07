@@ -1,6 +1,6 @@
 package com.wp.client;
 
-import com.wp.registry.Constant;
+import com.wp.server.Constant;
 import org.apache.zookeeper.KeeperException;
 import org.apache.zookeeper.WatchedEvent;
 import org.apache.zookeeper.Watcher;

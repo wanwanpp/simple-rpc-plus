@@ -1,4 +1,4 @@
-package com.wp.registry;
+package com.wp.server;
 
 public interface Constant {
 

@@ -1,4 +1,4 @@
-package com.wp.server;
+package com.wp.model;
 
 import lombok.Getter;
 import lombok.Setter;

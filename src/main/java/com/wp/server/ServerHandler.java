@@ -1,5 +1,7 @@
 package com.wp.server;
 
+import com.wp.model.Request;
+import com.wp.model.Response;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
