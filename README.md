@@ -1,4 +1,4 @@
-# simple-rpc-2
+# simple-rpc-plus
 ## 项目介绍
 基于**netty**和**zookeeper**实现的一款简单rpc调用框架。
 
